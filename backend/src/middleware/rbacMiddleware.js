@@ -1,13 +1,10 @@
-const rbacMiddleware = (requiredRole) => {
+const rbacMiddleware = (allowedRoles) => {
     return (req, res, next) => {
-        const user = req.user;
-        if (!user) {
-            return res.status(403).json({ message: 'Access denied. No user found.' });
+        const userRole = req.user.role; // Assuming user info is attached to req
+        if (allowedRoles.includes(userRole)) {
+            return next();
         }
-        if (user.role !== requiredRole) {
-            return res.status(403).json({ message: 'Access denied. Insufficient permissions.' });
-        }
-        next();
+        return res.status(403).json({ message: 'Access denied: insufficient permissions' });
     };
 };
 

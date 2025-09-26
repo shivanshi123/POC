@@ -1,5 +1,7 @@
 const express = require('express');
 const axios = require('axios');
+const { verifyJWT } = require('../utils/tokenUtils');
+const rbacMiddleware = require('../middleware/rbacMiddleware');
 const router = express.Router();
 
 // POST /api/auth/google/callback
@@ -42,6 +44,14 @@ router.post('/google/callback', async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: 'Token exchange failed', error: err.message });
   }
+});
+
+router.get('/admin', verifyJWT, rbacMiddleware(['admin']), (req, res) => {
+    res.send('Welcome to the admin area');
+});
+
+router.get('/user', verifyJWT, rbacMiddleware(['user', 'admin']), (req, res) => {
+    res.send('Welcome to the user area');
 });
 
 module.exports = router;

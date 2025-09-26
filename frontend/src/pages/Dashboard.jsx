@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 import { getCurrentUser } from '../utils/authUtils';
 import './Dashboard.css';
 
 const Dashboard = ({ user, setUser, onLogout }) => {
-  console.log("Dashboard Loaded with user:", user);
-  
+  const history = useHistory();
+
   useEffect(() => {
     let cancelled = false;
     if (!user) {
@@ -32,25 +34,36 @@ const Dashboard = ({ user, setUser, onLogout }) => {
       </p>
       <button className="dashboard-logout-btn" onClick={onLogout}>Logout</button>
 
-      {/* Admin Section */}
-      <div className="dashboard-panel admin-panel">
-        <h3>Admin Panel</h3>
-        {user.role === 'admin' ? (
-          <p>You have access to admin features.</p>
-        ) : (
-          <p style={{ color: 'gray' }}>You do not have permission to view this section.</p>
-        )}
+      <div style={{ margin: '2rem 0', display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+        <button
+          className="dashboard-nav-btn"
+          onClick={() => history.push('/admin')}
+        >
+          Navigate to Admin Page
+        </button>
+        <button
+          className="dashboard-nav-btn"
+          onClick={() => history.push('/user')}
+        >
+          Navigate to User Page
+        </button>
       </div>
 
+      {/* Admin Section */}
+      {user.role === 'admin' && (
+        <div className="dashboard-panel admin-panel">
+          <h3>Admin Panel</h3>
+          <p>You have access to admin features.</p>
+        </div>
+      )}
+
       {/* User Section */}
-      <div className="dashboard-panel user-panel">
-        <h3>User Panel</h3>
-        {user.role === 'user' || user.role === 'admin' ? (
+      {user.role === 'user' && (
+        <div className="dashboard-panel user-panel">
+          <h3>User Panel</h3>
           <p>You have access to user features.</p>
-        ) : (
-          <p style={{ color: 'gray' }}>You do not have permission to view this section.</p>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -72,3 +72,28 @@
   margin-top: 4rem;
   color: #185a9d;
 }
+
+.dashboard-nav-btn {
+  padding: 0.7rem 1.6rem;
+  background: linear-gradient(90deg, #2980b9 0%, #6dd5fa 100%);
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(41, 128, 185, 0.08);
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  outline: none;
+}
+
+.dashboard-nav-btn:hover, .dashboard-nav-btn:focus {
+  background: linear-gradient(90deg, #2574a9 0%, #43c6ac 100%);
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 4px 16px rgba(41, 128, 185, 0.15);
+}
+
+.dashboard-nav-btn:active {
+  background: linear-gradient(90deg, #145374 0%, #43c6ac 100%);
+  transform: scale(0.98);
+}
