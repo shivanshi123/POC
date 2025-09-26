@@ -4,6 +4,7 @@ import './Dashboard.css';
 
 const Dashboard = ({ user, setUser, onLogout }) => {
   console.log("Dashboard Loaded with user:", user);
+  
   useEffect(() => {
     let cancelled = false;
     if (!user) {
@@ -30,17 +31,26 @@ const Dashboard = ({ user, setUser, onLogout }) => {
         Your role: <strong>{user.role}</strong>
       </p>
       <button className="dashboard-logout-btn" onClick={onLogout}>Logout</button>
-      {user.role === 'admin' ? (
-        <div className="dashboard-panel admin-panel">
-          <h3>Admin Panel</h3>
+
+      {/* Admin Section */}
+      <div className="dashboard-panel admin-panel">
+        <h3>Admin Panel</h3>
+        {user.role === 'admin' ? (
           <p>You have access to admin features.</p>
-        </div>
-      ) : (
-        <div className="dashboard-panel user-panel">
-          <h3>User Panel</h3>
+        ) : (
+          <p style={{ color: 'gray' }}>You do not have permission to view this section.</p>
+        )}
+      </div>
+
+      {/* User Section */}
+      <div className="dashboard-panel user-panel">
+        <h3>User Panel</h3>
+        {user.role === 'user' || user.role === 'admin' ? (
           <p>You have access to user features.</p>
-        </div>
-      )}
+        ) : (
+          <p style={{ color: 'gray' }}>You do not have permission to view this section.</p>
+        )}
+      </div>
     </div>
   );
 };
