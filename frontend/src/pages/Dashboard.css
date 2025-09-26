@@ -1,0 +1,74 @@
+.dashboard-container {
+  background: rgba(255,255,255,0.97);
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(24,90,157,0.12);
+  padding: 2rem;
+  max-width: 600px;
+  margin: 2rem auto;
+  text-align: center;
+  animation: fadeInDashboard 0.8s;
+}
+
+@keyframes fadeInDashboard {
+  from { opacity: 0; transform: translateY(40px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+
+.dashboard-title {
+  color: #185a9d;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.dashboard-welcome {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-role {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  color: #43cea2;
+}
+
+.dashboard-logout-btn {
+  background: linear-gradient(90deg, #185a9d 0%, #43cea2 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-bottom: 1.2rem;
+  transition: box-shadow 0.3s, transform 0.2s;
+}
+
+.dashboard-logout-btn:hover {
+  box-shadow: 0 4px 16px rgba(24,90,157,0.18);
+  transform: translateY(-2px) scale(1.03);
+}
+
+.dashboard-panel {
+  padding: 1rem;
+  border-radius: 12px;
+  margin-top: 1rem;
+  font-size: 1.05rem;
+}
+
+.admin-panel {
+  background: linear-gradient(90deg, #f7971e 0%, #ffd200 100%);
+  color: #333;
+}
+
+.user-panel {
+  background: linear-gradient(90deg, #43cea2 0%, #185a9d 100%);
+  color: #fff;
+}
+
+.dashboard-loading {
+  text-align: center;
+  font-size: 1.2rem;
+  margin-top: 4rem;
+  color: #185a9d;
+}
