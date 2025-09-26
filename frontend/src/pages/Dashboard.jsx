@@ -1,14 +1,18 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getCurrentUser } from '../utils/authUtils';
 import './Dashboard.css';
 
 const Dashboard = ({ user, setUser, onLogout }) => {
+  console.log("Dashboard Loaded with user:", user);
   useEffect(() => {
+    let cancelled = false;
     if (!user) {
-      getCurrentUser().then(u => {
-        if (u) setUser(u);
-      });
+      (async () => {
+        const u = await getCurrentUser();
+        if (u && !cancelled) setUser(u);
+      })();
     }
+    return () => { cancelled = true; };
   }, [user, setUser]);
 
   if (!user) return <div className="dashboard-loading">Loading...</div>;

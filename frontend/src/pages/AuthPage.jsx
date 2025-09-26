@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { loginUser, registerUser } from '../utils/authUtils';
+import { loginUser, registerUser, setToken, getCurrentUser } from '../utils/authUtils';
 import './AuthPage.css';
+import history from '../history';
 
 const AuthPage = ({ setUser }) => {
   const [isLogin, setIsLogin] = useState(true);
@@ -46,9 +47,18 @@ const AuthPage = ({ setUser }) => {
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
     if (token) {
-      localStorage.setItem('jwt', token); // Store token
-      setUser({ token }); // Or fetch user details from backend
-      window.location.href = '/dashboard'; // Redirect to dashboard
+      console.log('[AuthPage] OAuth token detected');
+      (async () => {
+        setToken(token);
+        const u = await getCurrentUser();
+        if (u) {
+          setUser(u);
+          // Use shared history (same Router)
+          history.replace('/dashboard');
+        } else {
+          console.warn('[AuthPage] Could not load user after token');
+        }
+      })();
     }
   }, [setUser]);
 

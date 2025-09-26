@@ -7,7 +7,14 @@ const jwtMiddleware = (req, res, next) => {
     }
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
+        // Ensure consistent user shape
+        req.user = {
+          id: decoded.id,
+            username: decoded.username,
+            email: decoded.email,
+            role: decoded.role || 'user',
+            provider: decoded.provider || 'local'
+        };
         next();
     } catch (error) {
         return res.status(401).json({ message: 'Unauthorized' });

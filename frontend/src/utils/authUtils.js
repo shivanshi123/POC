@@ -1,28 +1,31 @@
 import { jwtDecode } from 'jwt-decode';
 
+// Normalize token key to 'jwt' everywhere
+const TOKEN_KEY = 'jwt';
+
 export const setToken = (token) => {
-    localStorage.setItem('token', token);
+    localStorage.setItem(TOKEN_KEY, token);
 };
 
 export const getToken = () => {
-    return localStorage.getItem('token');
+    return localStorage.getItem(TOKEN_KEY);
 };
 
 export const removeToken = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem(TOKEN_KEY);
 };
 
 export function isAuthenticated() {
-  return !!localStorage.getItem('jwt');
+    console.log("Checking authentication status", getToken());
+  return !!getToken();
 }
 
 export async function getCurrentUser() {
-  const token = localStorage.getItem('jwt');
+  const token = getToken();
+  if (!token) return null;
   const res = await fetch('http://localhost:5000/api/auth/current', {
     method: 'GET',
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { Authorization: `Bearer ${token}` }
   });
   if (!res.ok) return null;
   return await res.json();
@@ -50,11 +53,8 @@ export const registerUser = async ({ username, password, role }) => {
         body: JSON.stringify({ username, password, role })
     });
     const data = await response.json();
-    if (response.ok) {
-        return data;
-    } else {
-        throw new Error(data.message || 'Registration failed');
-    }
+    if (response.ok) return data;
+    throw new Error(data.message || 'Registration failed');
 };
 
 export const logoutUser = () => {

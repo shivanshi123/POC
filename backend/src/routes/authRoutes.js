@@ -2,30 +2,23 @@ const express = require('express');
 const authController = require('../controllers/authController');
 const jwtMiddleware = require('../middleware/jwtMiddleware');
 const rbacMiddleware = require('../middleware/rbacMiddleware');
-const User = require('../models/user');
-const passport = require('passport');
-
 const router = express.Router();
 
 router.post('/register', authController.register);
 router.post('/login', authController.login);
 router.get('/profile', jwtMiddleware, authController.getProfile);
 router.get('/admin', jwtMiddleware, rbacMiddleware('admin'), authController.admin);
-router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-// Get current user info from JWT
-router.get('/current', jwtMiddleware, async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id).select('-password');
-    if (!user) return res.status(404).json({ error: 'User not found' });
-    res.json({
-      username: user.username,
-      email: user.email,
-      role: user.role
-    });
-  } catch (err) {
-    res.status(500).json({ error: 'Server error' });
-  }
+// Simplified current user (no DB lookup for POC)
+router.get('/current', jwtMiddleware, (req, res) => {
+  if (!req.user) return res.status(401).json({ error: 'No user' });
+  res.json({
+    id: req.user.id,
+    username: req.user.username,
+    email: req.user.email,
+    role: req.user.role,
+    provider: req.user.provider
+  });
 });
 
 module.exports = router;

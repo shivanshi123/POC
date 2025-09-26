@@ -1,6 +1,21 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
+function buildPayload(user) {
+  return {
+    id: user.id || user._id,
+    username: user.username || user.displayName || (user.email ? user.email.split('@')[0] : 'user'),
+    email: user.email,
+    role: user.role || 'user',
+    provider: user.provider || 'local'
+  };
+}
+
+function issueToken(user) {
+  const payload = buildPayload(user);
+  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+}
+
 class AuthController {
     async register(req, res) {
         const { username, password, role } = req.body;
@@ -19,11 +34,7 @@ class AuthController {
             if (!user || user.password !== password) {
                 return res.status(401).json({ message: 'Invalid credentials' });
             }
-            const token = jwt.sign(
-                { id: user.id, username: user.username, role: user.role },
-                process.env.JWT_SECRET,
-                { expiresIn: '1h' }
-            );
+            const token = issueToken(user);
             res.status(200).json({ message: 'Login successful', token });
         } catch (error) {
             res.status(500).json({ message: 'Error logging in', error });
@@ -40,3 +51,4 @@ class AuthController {
 }
 
 module.exports = new AuthController();
+module.exports.issueToken = issueToken;
