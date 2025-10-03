@@ -3,14 +3,19 @@ const jwt = require('jsonwebtoken');
 const SECRET_KEY = process.env.JWT_SECRET || 'your_secret_key';
 const EXPIRATION_TIME = '1h'; // Token expiration time
 
-const generateToken = (user) => {
-    const payload = {
-        id: user.id,
-        email: user.email,
-        roles: user.roles,
-    };
-    return jwt.sign(payload, SECRET_KEY, { expiresIn: EXPIRATION_TIME });
-};
+function generateJWT(user) {
+  return jwt.sign(
+    {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      role: user.role || 'user',
+      provider: user.provider || 'local'
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: '1h' }
+  );
+}
 
 const verifyToken = (token) => {
     try {
@@ -21,6 +26,6 @@ const verifyToken = (token) => {
 };
 
 module.exports = {
-    generateToken,
+    generateJWT,
     verifyToken,
 };

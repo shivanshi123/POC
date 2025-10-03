@@ -53,13 +53,18 @@ const AuthPage = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // Example: decode JWT from localStorage (replace with your logic)
-    const token = localStorage.getItem('access_token');
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
     if (token) {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      setUser(payload);
+      (async () => {
+        const u = await getCurrentUser();
+        if (u) {
+          setUser(u);
+          history.replace('/dashboard');
+        }
+      })();
     }
-  }, []);
+  }, [setUser, history]);
 
   const handleGoogleLogin = () => {
     // Generate PKCE challenge

@@ -1,15 +1,14 @@
 const jwt = require('jsonwebtoken');
 
 const jwtMiddleware = (req, res, next) => {
-    const token = req.headers['authorization']?.split(' ')[1];
+    const token = req.cookies.access_token;
     if (!token) {
         return res.status(401).json({ message: 'No token provided' });
     }
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        // Ensure consistent user shape
         req.user = {
-          id: decoded.id,
+            id: decoded.id,
             username: decoded.username,
             email: decoded.email,
             role: decoded.role || 'user',

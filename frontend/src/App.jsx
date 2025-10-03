@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Route, Switch, Redirect, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, Redirect, useLocation, useHistory } from 'react-router-dom';
 import AuthPage from './pages/AuthPage';
 import Dashboard from './pages/Dashboard';
 import AdminPage from './pages/AdminPage'; // Import your AdminPage component
@@ -12,6 +12,7 @@ const App = () => {
   const [user, setUser] = useState(null);
   const [authReady, setAuthReady] = useState(false);
   const location = useLocation();
+  const history = useHistory();
 
   useEffect(() => {
     console.log('[Route] React location:', location.pathname, 'window:', window.location.pathname);
@@ -29,6 +30,12 @@ const App = () => {
     };
     boot();
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      history.push('/dashboard');
+    }
+  }, [user, history]);
 
   const handleLogout = () => {
     localStorage.removeItem('jwt');
@@ -72,7 +79,7 @@ const App = () => {
 
         {/* Public Route for Authentication */}
         <Route path="/auth" exact>
-          <AuthPage setUser={setUser} />
+          <AuthPage user={user} setUser={setUser} />
         </Route>
 
         {/* Redirect to Auth Page if no match */}

@@ -74,4 +74,17 @@ router.post('/logout', (req, res) => {
   res.json({ message: 'Logged out and refresh token revoked' });
 });
 
+router.post('/login', async (req, res) => {
+  // ...existing login logic...
+  const token = generateJWT(user); // however you generate your JWT
+
+  res.cookie('access_token', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    maxAge: 60 * 60 * 1000
+  });
+  res.json({ success: true });
+});
+
 module.exports = router;

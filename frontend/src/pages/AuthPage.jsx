@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { loginUser, registerUser, setToken, getCurrentUser } from '../utils/authUtils';
+import { loginUser, registerUser, getCurrentUser } from '../utils/authUtils';
 import './AuthPage.css';
-import history from '../history';
 
 const AuthPage = ({ setUser }) => {
   const [isLogin, setIsLogin] = useState(true);
@@ -20,7 +19,7 @@ const AuthPage = ({ setUser }) => {
     try {
       const u = await loginUser(form);
       setUser(u);
-      history.push('/dashboard');
+      history.push('/dashboard'); // after login
     } catch (err) {
       setError('Login failed');
     }
@@ -49,18 +48,18 @@ const AuthPage = ({ setUser }) => {
     if (token) {
       console.log('[AuthPage] OAuth token detected');
       (async () => {
-        setToken(token);
         const u = await getCurrentUser();
         if (u) {
           setUser(u);
-          // Use shared history (same Router)
-          history.replace('/dashboard');
+          history.replace('/dashboard'); // after OAuth
         } else {
           console.warn('[AuthPage] Could not load user after token');
         }
       })();
     }
   }, [setUser]);
+
+
 
   return (
     <div className="authpage-background">
