@@ -2,7 +2,10 @@ const express = require('express');
 const axios = require('axios');
 const { verifyJWT } = require('../utils/tokenUtils');
 const rbacMiddleware = require('../middleware/rbacMiddleware');
+const passport = require('passport');
 const router = express.Router();
+
+console.log('OAuth routes loaded');
 
 // POST /api/auth/google/callback
 router.post('/google/callback', async (req, res) => {
@@ -78,5 +81,7 @@ router.get('/admin', verifyJWT, rbacMiddleware(['admin']), (req, res) => {
 router.get('/user', verifyJWT, rbacMiddleware(['user', 'admin']), (req, res) => {
     res.send('Welcome to the user area');
 });
+
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 module.exports = router;

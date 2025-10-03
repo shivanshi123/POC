@@ -37,8 +37,11 @@ const App = () => {
     }
   }, [user, history]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('jwt');
+  const handleLogout = async () => {
+    await fetch('http://localhost:5000/api/auth/logout', {
+      method: 'POST',
+      credentials: 'include'
+    });
     setUser(null);
   };
 

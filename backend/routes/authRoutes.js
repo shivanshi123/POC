@@ -63,15 +63,19 @@ router.get('/profile', jwtMiddleware, rbacMiddleware(['user', 'admin']), (req, r
 
 // Logout route: revoke refresh token and clear cookie
 router.post('/logout', (req, res) => {
-  // If you store refresh tokens in a DB, delete it here using user info
-  // Example: await RefreshToken.deleteOne({ token: req.cookies.refresh_token });
-
+  res.clearCookie('access_token', {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'Strict',
+    path: '/',
+  });
   res.clearCookie('refresh_token', {
     httpOnly: true,
     secure: true,
     sameSite: 'Strict',
+    path: '/',
   });
-  res.json({ message: 'Logged out and refresh token revoked' });
+  res.json({ message: 'Logged out and tokens revoked' });
 });
 
 router.post('/login', async (req, res) => {

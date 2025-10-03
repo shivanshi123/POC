@@ -44,4 +44,20 @@ router.get('/current', jwtMiddleware, (req, res) => {
   });
 });
 
+router.post('/logout', (req, res) => {
+  res.clearCookie('access_token', {
+    httpOnly: true,
+    secure: false, // use true in production with HTTPS
+    sameSite: 'strict',
+    path: '/',
+  });
+  res.clearCookie('refresh_token', {
+    httpOnly: true,
+    secure: false,
+    sameSite: 'strict',
+    path: '/',
+  });
+  res.json({ message: 'Logged out and tokens revoked' });
+});
+
 module.exports = router;
