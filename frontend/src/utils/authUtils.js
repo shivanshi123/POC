@@ -57,3 +57,11 @@ export const logoutUser = async () => {
         credentials: 'include'
     });
 };
+
+export async function refreshToken() {
+  const res = await fetch('http://localhost:5000/api/auth/refresh', {
+    method: 'POST',
+    credentials: 'include'
+  });
+  return res.ok;
+}
