@@ -47,6 +47,7 @@ router.post('/refresh', async (req, res) => {
 
     res.json({ access_token: accessToken });
   } catch (err) {
+    console.log("here")
     res.status(401).json({ message: 'Invalid refresh token' });
   }
 });
@@ -89,6 +90,10 @@ router.post('/login', async (req, res) => {
     maxAge: 60 * 60 * 1000
   });
   res.json({ success: true });
+  await User.saveRefreshToken(user.id, refreshToken);
 });
+
+const user = await User.findByRefreshToken(refreshToken);
+if (!user) return res.status(401).json({ error: 'Invalid refresh token' });
 
 module.exports = router;

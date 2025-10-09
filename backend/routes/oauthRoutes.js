@@ -4,6 +4,8 @@ const { verifyJWT } = require('../utils/tokenUtils');
 const rbacMiddleware = require('../middleware/rbacMiddleware');
 const passport = require('passport');
 const router = express.Router();
+const User = require('../models/User'); // Adjust the path as necessary
+const crypto = require('crypto');
 
 console.log('OAuth routes loaded');
 
@@ -41,6 +43,9 @@ router.post('/google/callback', async (req, res) => {
       sameSite: 'Strict',
       maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
     });
+
+    // Save the refresh token to the database
+    await User.saveRefreshToken(user.id, refresh_token); // <-- Suggested change incorporated here
 
     // Send access token and id token in response body
     res.json({ access_token, id_token });
@@ -83,5 +88,28 @@ router.get('/user', verifyJWT, rbacMiddleware(['user', 'admin']), (req, res) => 
 });
 
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+// After passport authentication:
+router.get('/google/callback',
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  async (req, res) => {
+    let user = await User.findById(req.user.id);
+    if (!user) {
+      user = await User.create({
+        id: req.user.id,
+        username: req.user.displayName,
+        email: req.user.email,
+        role: req.user.role || 'user',
+        provider: 'google'
+      });
+    }
+    const token = issueToken(user);
+
+    // Generate and store refresh token
+    const refreshToken = crypto.randomBytes(64).toString('hex');
+    await User.saveRefreshToken(user.id, refreshToken);
+
+    // Set cookies as before...
+  });
 
 module.exports = router;
